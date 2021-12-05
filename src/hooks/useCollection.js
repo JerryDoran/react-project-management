@@ -1,0 +1,49 @@
+import { useState, useEffect, useRef } from 'react';
+import { projectFirestore } from '../firebase/config';
+
+export const useCollection = (collection, _query, _orderBy) => {
+  const [documents, setDocuments] = useState(null);
+  const [error, setError] = useState(null);
+
+  // prevents and infinite loop because the query is an array which is a reference type
+  // and everytime this component is evaluated the useEffect will run again because it thinks
+  // query has changed because of different memory location
+  const query = useRef(_query).current;
+  const orderBy = useRef(_orderBy).current;
+
+  useEffect(() => {
+    let ref = projectFirestore.collection(collection);
+
+    if (query) {
+      ref = ref.where(...query);
+    }
+
+    if (orderBy) {
+      ref = ref.orderBy(...orderBy);
+    }
+
+    const unsub = ref.onSnapshot(
+      (snapshot) => {
+        let results = [];
+        snapshot.docs.forEach((doc) => {
+          results.push({ ...doc.data(), id: doc.id });
+        });
+
+        // update state
+        setDocuments(results);
+        setError(null);
+      },
+      (error) => {
+        console.log(error);
+        setError('Could not fetch the data...');
+      }
+    );
+
+    // unsubscribe on unmount
+    return () => {
+      unsub();
+    };
+  }, [collection, query, orderBy]);
+
+  return { documents, error };
+};
