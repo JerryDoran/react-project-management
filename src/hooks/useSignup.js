@@ -1,5 +1,9 @@
 import { useEffect, useState } from 'react';
-import { projectAuth } from '../firebase/config';
+import {
+  projectAuth,
+  projectStorage,
+  projectFirestore,
+} from '../firebase/config';
 import { useAuthContext } from './useAuthContext';
 
 export const useSignup = () => {
@@ -8,7 +12,7 @@ export const useSignup = () => {
   const [isCanceled, setIsCanceled] = useState(false);
   const { dispatch } = useAuthContext();
 
-  const signup = async (email, password, displayName) => {
+  const signup = async (email, password, displayName, thumbnail) => {
     setError(null);
     setIsPending(true);
 
@@ -23,8 +27,23 @@ export const useSignup = () => {
         throw new Error('Could not complete signup');
       }
 
+      // upload user photo
+      const uploadPath = `thumbnails/${res.user.uid}/${thumbnail.name}`;
+      const image = await projectStorage.ref(uploadPath).put(thumbnail);
+      const imageURL = await image.ref.getDownloadURL();
+
       // add display name to user
-      await res.user.updateProfile({ displayName: displayName });
+      await res.user.updateProfile({
+        displayName: displayName,
+        photoURL: imageURL,
+      });
+
+      // create user document
+      await projectFirestore.collection('users').doc(res.user.uid).set({
+        online: true,
+        displayName: displayName,
+        photoURL: imageURL,
+      });
 
       // displatch login action
       dispatch({ type: 'LOGIN', payload: res.user });
@@ -36,7 +55,6 @@ export const useSignup = () => {
       }
     } catch (error) {
       if (!isCanceled) {
-        console.log(error.message);
         setError(error.message);
         setIsPending(false);
       }

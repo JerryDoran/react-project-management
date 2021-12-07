@@ -1,8 +1,8 @@
 import styled from 'styled-components';
 
 export const SidebarContainer = styled.div`
-  width: 300px;
-  min-width: 300px;
+  width: 250px;
+  min-width: 250px;
   background-color: var(--primary-color);
   min-height: 100vh;
   box-sizing: border-box;

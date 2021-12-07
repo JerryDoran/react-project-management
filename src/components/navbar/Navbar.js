@@ -5,14 +5,17 @@ import {
   ListItem,
   LogoContainer,
   LogoIcon,
-  Navbar,
+  Nav,
 } from './Navbar.styled';
 import temple from '../../assets/temple.svg';
 import { Link } from 'react-router-dom';
+import { useLogout } from '../../hooks/useLogout';
 
-export default function Create() {
+export default function Navbar() {
+  const { logout, isPending } = useLogout();
+
   return (
-    <Navbar>
+    <Nav>
       <LogoContainer>
         <Link to='/'>
           <LogoIcon src={temple} alt='dojo logo' />
@@ -28,9 +31,10 @@ export default function Create() {
           <Link to='/signup'>Signup</Link>
         </ListItem>
         <ListItem>
-          <Button>Logout</Button>
+          {!isPending && <Button onClick={logout}>Logout</Button>}
+          {isPending && <Button disabled>Logging out...</Button>}
         </ListItem>
       </List>
-    </Navbar>
+    </Nav>
   );
 }
