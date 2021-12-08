@@ -18,6 +18,7 @@ import Signup from './pages/signup/Signup';
 import Project from './pages/project/Project';
 import Navbar from './components/navbar/Navbar';
 import Sidebar from './components/sidebar/Sidebar';
+import Users from './components/Users/Users';
 
 function App() {
   const { user, authIsReady } = useAuthContext();
@@ -27,7 +28,7 @@ function App() {
       <GlobalStyle />
       {authIsReady && (
         <Router>
-          <Sidebar />
+          {user && <Sidebar />}
           <div className='container'>
             <Navbar />
             <Switch>
@@ -43,7 +44,7 @@ function App() {
                 {user && <Redirect to='/' />}
                 {!user && <Login />}
               </Route>
-              <Route path='/signup'>
+              <Route pat0h='/signup'>
                 {user && <Redirect to='/' />}
                 {!user && <Signup />}
               </Route>
@@ -53,6 +54,7 @@ function App() {
               </Route>
             </Switch>
           </div>
+          {user && <Users />}
         </Router>
       )}
     </div>

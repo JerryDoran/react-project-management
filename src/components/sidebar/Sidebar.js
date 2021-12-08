@@ -9,14 +9,18 @@ import {
 import DashboardIcon from '../../assets/dashboard_icon.svg';
 import AddIcon from '../../assets/add_icon.svg';
 import { NavLink } from 'react-router-dom';
+import Avatar from '../avatar/Avatar';
+import { useAuthContext } from '../../hooks/useAuthContext';
 
 export default function Sidebar() {
+  const { user } = useAuthContext();
+
   return (
     <SidebarContainer>
       <SidebarContent>
         <User>
-          {/* avatar and username here */}
-          <p>Hey user</p>
+          <Avatar src={user.photoURL} width='60px' height='60px' />
+          <p>Hey {user.displayName}</p>
         </User>
         <Nav>
           <List>
