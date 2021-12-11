@@ -31,6 +31,13 @@ const firestoreReducer = (state, action) => {
         success: true,
         error: null,
       };
+    case 'UPDATE_DOCUMENT':
+      return {
+        isPending: false,
+        document: action.payload,
+        success: true,
+        error: null,
+      };
     case 'ERROR':
       return {
         document: null,
@@ -87,11 +94,28 @@ export const useFirestore = (collection) => {
     }
   };
 
+  // update document
+  const updateDocument = async (id, updates) => {
+    dispatch({ type: 'IS_PENDING' });
+
+    try {
+      const updatedDocument = await ref.doc(id).update(updates);
+      dispatchIfNotCanceled({
+        type: 'UPDATE_DOCUMENT',
+        payload: updatedDocument,
+      });
+      return updatedDocument;
+    } catch (error) {
+      dispatchIfNotCanceled({ type: 'ERROR', payload: error.message });
+      return null;
+    }
+  };
+
   useEffect(() => {
     return () => {
       setIsCanceled(true);
     };
   }, []);
 
-  return { addDocument, deleteDocument, response };
+  return { addDocument, deleteDocument, updateDocument, response };
 };
