@@ -38,9 +38,9 @@ export default function ProjectSummary({ project }) {
           ))}
         </div>
       </ProjectSummaryWrapper>
-      {user.uid === project.createdBy.id && (
-        <Button onClick={handleClick}>Mark as Complete</Button>
-      )}
+      {/* {user.uid === project.createdBy.id && ( */}
+      <Button onClick={handleClick}>Mark as Complete</Button>
+      {/* )} */}
     </ProjectSummaryContainer>
   );
 }

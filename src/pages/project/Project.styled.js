@@ -88,6 +88,7 @@ export const CommentsContainer = styled.div`
   .commentDate {
     color: var(--text-color);
     font-size: 11px;
+    margin-bottom: 10px;
   }
 
   .commentContent {
